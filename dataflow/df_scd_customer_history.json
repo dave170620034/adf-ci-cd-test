@@ -63,6 +63,8 @@
 			],
 			"scriptLines": [
 				"parameters{",
+				"     directory_name as string,",
+				"     file_name as string,",
 				"     container_name as string,",
 				"     directory_name as string,",
 				"     file_name as string",

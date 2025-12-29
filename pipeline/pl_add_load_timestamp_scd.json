@@ -18,21 +18,16 @@
 					"dataflow": {
 						"referenceName": "df_scd_customer_history",
 						"type": "DataFlowReference",
+						"parameters": {
+							"container_name": "$container_name",
+							"directory_name": "$directory_name",
+							"file_name": "$file_name"
+						},
 						"datasetParameters": {
 							"srcnewdata": {
 								"container_name": "raw",
 								"directory_name": "/",
 								"file_name": "user_input_large_data.csv"
-							},
-							"srcexistingdata": {
-								"container_name": "raw",
-								"directory_name": "processed",
-								"file_name": "sales_processed.csv"
-							},
-							"sinkprocessed": {
-								"container_name": "raw",
-								"directory_name": "processed",
-								"file_name": "sales_processed.csv"
 							}
 						}
 					},
