@@ -21,8 +21,9 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "user_input_large_data.csv",
-				"container": "raw"
+				"fileName": "@dataset().file_name",
+				"folderPath": "@dataset().directory_name",
+				"container": "@dataset().container_name"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
