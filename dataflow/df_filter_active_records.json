@@ -1,0 +1,59 @@
+{
+	"name": "df_filter_active_records",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sales_raw_dev",
+						"type": "DatasetReference"
+					},
+					"name": "srcsalesraw"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sales_processed_dev",
+						"type": "DatasetReference"
+					},
+					"name": "snksalesprocessed"
+				}
+			],
+			"transformations": [
+				{
+					"name": "fltactiverecords"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as string,",
+				"          customer_name as string,",
+				"          age as string,",
+				"          city as string,",
+				"          purchase_amount as string,",
+				"          purchase_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcsalesraw",
+				"srcsalesraw filter(city == 'Pune') ~> fltactiverecords",
+				"fltactiverecords sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          customer_id as string,",
+				"          customer_name as string,",
+				"          age as string,",
+				"          city as string,",
+				"          purchase_amount as string,",
+				"          purchase_date as string",
+				"     ),",
+				"     partitionFileNames:['user_input_large_data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> snksalesprocessed"
+			]
+		}
+	}
+}

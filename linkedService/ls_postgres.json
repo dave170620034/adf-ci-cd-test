@@ -1,0 +1,17 @@
+{
+	"name": "ls_postgres",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "PostgreSqlV2",
+		"typeProperties": {
+			"server": "airflow-postgres",
+			"port": 5432,
+			"database": "airflow",
+			"username": "postgres",
+			"sslMode": 2,
+			"authenticationType": "Basic",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEJBQTM2OTZCLUU5MkEtNDAzMy04MDFDLTRBRTRFMTk3RUVBQl9mYjE4NzlmZi1iZDg3LTQxZTEtODdlZC1hMjJjOGEwMTNlYTciDQp9"
+		}
+	}
+}

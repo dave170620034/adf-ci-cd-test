@@ -1,0 +1,146 @@
+{
+	"name": "pl_control_decision",
+	"properties": {
+		"activities": [
+			{
+				"name": "lk_check_processed",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_sales_raw_dev",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "flt_processed_exists",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "lk_check_processed",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('lk_check_processed').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@greater(length(item()),0)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "sv_set_first_run",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "flt_processed_exists",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "isFirstRun",
+					"value": "Dynamic content @equals(length(activity('flt_processed_exists').output.value),0)\n"
+				}
+			},
+			{
+				"name": "if_first_run_check",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "sv_set_first_run",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@variables('isFirstRun')\n",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "ep_execution_pipeline",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "pl_filter_active_records",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "ep_initial_load",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "pl_copy_raw_to_processed",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"isFirstRun": {
+				"type": "Boolean",
+				"defaultValue": true
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-29T06:19:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

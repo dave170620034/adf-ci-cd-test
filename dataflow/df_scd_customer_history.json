@@ -1,0 +1,141 @@
+{
+	"name": "df_scd_customer_history",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sales_raw_dev",
+						"type": "DatasetReference"
+					},
+					"name": "srcnewdata"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sales_processed_dev",
+						"type": "DatasetReference"
+					},
+					"name": "srcexistingdata"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sales_processed_dev",
+						"type": "DatasetReference"
+					},
+					"name": "sinkprocessed",
+					"rejectedDataLinkedService": {
+						"referenceName": "ls_blob_dev",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "drvnewdefaults"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "drvchangedetection"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "drvexpireold"
+				},
+				{
+					"name": "drvnewversion"
+				},
+				{
+					"name": "drvexpireold1"
+				},
+				{
+					"name": "unionallrecords"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as string,",
+				"          customer_name as string,",
+				"          age as string,",
+				"          city as string,",
+				"          purchase_amount as string,",
+				"          purchase_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcnewdata",
+				"source(output(",
+				"          customer_id as string,",
+				"          customer_name as string,",
+				"          age as string,",
+				"          city as string,",
+				"          purchase_amount as string,",
+				"          purchase_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcexistingdata",
+				"drvexpireold derive(load_timestamp = currentTimestamp(),",
+				"          start_dat = currentTimestamp(),",
+				"          end_date = toTimestamp('9999-12-31'),",
+				"          is_current = 'Y') ~> drvnewdefaults",
+				"srcnewdata, srcexistingdata join(srcnewdata@customer_id == srcexistingdata@customer_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"select1 derive(is_changed = iif(     isNull(customer_id_old)     ||     customer_name_new != customer_name_old     ||     age_new != age_old     ||     city_new != city_old     ||     purchase_amount_new != purchase_amount_old,     'Y',     'N' )) ~> drvchangedetection",
+				"drvchangedetection split(toString(is_changed) == 'Y',",
+				"     toString(is_changed) == 'N',",
+				"     disjoint: false) ~> split1@(NewOrChanged, Unchanged)",
+				"join1 select(mapColumn(",
+				"          customer_id_new = srcnewdata@customer_id,",
+				"          customer_name_new = srcnewdata@customer_name,",
+				"          age_new = srcnewdata@age,",
+				"          city_new = srcnewdata@city,",
+				"          purchase_amount_new = srcnewdata@purchase_amount,",
+				"          purchase_date_new = srcnewdata@purchase_date,",
+				"          customer_id_old = srcexistingdata@customer_id,",
+				"          customer_name_old = srcexistingdata@customer_name,",
+				"          age_old = srcexistingdata@age,",
+				"          city_old = srcexistingdata@city,",
+				"          purchase_amount_old = srcexistingdata@purchase_amount,",
+				"          purchase_date_old = srcexistingdata@purchase_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"drvnewversion derive(is_current = 'N',",
+				"          end_date = currentTimestamp()) ~> drvexpireold",
+				"drvexpireold1 derive(is_current = 'Y',",
+				"          start_date = currentTimestamp(),",
+				"          end_date = toTimestamp('9999-12-31')) ~> drvnewversion",
+				"split1@NewOrChanged derive(is_current = 'N',",
+				"          end_date = currentTimestamp()) ~> drvexpireold1",
+				"drvnewversion, drvexpireold1, split1@Unchanged union(byName: true)~> unionallrecords",
+				"unionallrecords sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          customer_id as string,",
+				"          customer_name as string,",
+				"          age as string,",
+				"          city as string,",
+				"          purchase_amount as string,",
+				"          purchase_date as string",
+				"     ),",
+				"     partitionFileNames:['sales_processed.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkprocessed"
+			]
+		}
+	}
+}

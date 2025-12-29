@@ -1,0 +1,76 @@
+{
+	"name": "src_sales",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sales_raw_dev",
+						"type": "DatasetReference"
+					},
+					"name": "srcsales"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sales_processed_dev",
+						"type": "DatasetReference"
+					},
+					"name": "sinkaggregatedsales"
+				}
+			],
+			"transformations": [
+				{
+					"name": "aggtotalsales"
+				},
+				{
+					"name": "drvcastamount"
+				},
+				{
+					"name": "sltderivedcolumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as string,",
+				"          customer_name as string,",
+				"          age as string,",
+				"          city as string,",
+				"          purchase_amount as string,",
+				"          purchase_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcsales",
+				"drvcastamount aggregate(groupBy(customer_name,",
+				"          customer_id),",
+				"     total_purchase_amount = sum(purchase_amount)) ~> aggtotalsales",
+				"sltderivedcolumns derive(purchase_amount = toDecimal(purchase_amount)) ~> drvcastamount",
+				"srcsales select(mapColumn(",
+				"          customer_id,",
+				"          customer_name,",
+				"          age,",
+				"          city,",
+				"          purchase_amount,",
+				"          purchase_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sltderivedcolumns",
+				"aggtotalsales sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          customer_id as string,",
+				"          customer_name as string,",
+				"          age as string,",
+				"          city as string,",
+				"          purchase_amount as string,",
+				"          purchase_date as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sinkaggregatedsales"
+			]
+		}
+	}
+}
