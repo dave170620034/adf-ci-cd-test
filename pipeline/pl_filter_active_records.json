@@ -17,7 +17,19 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "df_filter_active_records",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"srcsalesraw": {
+								"container_name": "raw",
+								"directory_name": "/",
+								"file_name": "user_input_large_data.csv"
+							},
+							"snksalesprocessed": {
+								"container_name": "raw",
+								"directory_name": "processed",
+								"file_name": "sales_processed.csv"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
