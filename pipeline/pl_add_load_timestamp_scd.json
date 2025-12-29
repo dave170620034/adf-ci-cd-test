@@ -28,6 +28,11 @@
 								"container_name": "raw",
 								"directory_name": "processed",
 								"file_name": "sales_processed.csv"
+							},
+							"sinkprocessed": {
+								"container_name": "raw",
+								"directory_name": "processed",
+								"file_name": "sales_processed.csv"
 							}
 						}
 					},
