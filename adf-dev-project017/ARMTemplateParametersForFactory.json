@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-dev-project017"
+		},
+		"ls_airflow_http_password": {
+			"value": ""
+		},
+		"ls_aws_s3_secretAccessKey": {
+			"value": ""
+		},
+		"ls_blob_dev_connectionString": {
+			"value": ""
+		},
+		"ls_postgres_password": {
+			"value": ""
+		},
+		"ls_airflow_http_properties_typeProperties_url": {
+			"value": "https://naval-intrinsic-archie.ngrok-free.dev"
+		},
+		"ls_airflow_http_properties_typeProperties_userName": {
+			"value": "airflow"
+		},
+		"ls_aws_s3_properties_typeProperties_accessKeyId": {
+			"value": "AKIAQW3CPVFNAJBNBHAD"
+		},
+		"ls_postgres_properties_typeProperties_server": {
+			"value": "airflow-postgres"
+		},
+		"ls_postgres_properties_typeProperties_database": {
+			"value": "airflow"
+		},
+		"ls_postgres_properties_typeProperties_username": {
+			"value": "postgres"
+		}
+	}
+}
