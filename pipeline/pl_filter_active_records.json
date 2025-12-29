@@ -18,6 +18,20 @@
 					"dataflow": {
 						"referenceName": "df_filter_active_records",
 						"type": "DataFlowReference",
+						"parameters": {
+							"container_name": {
+								"value": "'@{pipeline().parameters.container_name}'",
+								"type": "Expression"
+							},
+							"directory_name": {
+								"value": "'@{pipeline().parameters.directory_name}'",
+								"type": "Expression"
+							},
+							"file_name": {
+								"value": "'@{pipeline().parameters.file_name}'",
+								"type": "Expression"
+							}
+						},
 						"datasetParameters": {
 							"srcsalesraw": {
 								"container_name": "raw",
