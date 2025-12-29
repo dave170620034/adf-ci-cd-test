@@ -19,8 +19,8 @@
 						"referenceName": "df_scd_customer_history",
 						"type": "DataFlowReference",
 						"parameters": {
-							"container_name": "$container_name",
 							"directory_name": "$directory_name",
+							"container_name": "$container_name",
 							"file_name": "$file_name"
 						},
 						"datasetParameters": {
