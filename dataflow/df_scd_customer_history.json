@@ -62,6 +62,11 @@
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     container_name as string,",
+				"     directory_name as string,",
+				"     file_name as string",
+				"}",
 				"source(output(",
 				"          customer_id as string,",
 				"          customer_name as string,",
