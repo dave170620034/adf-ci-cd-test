@@ -65,7 +65,7 @@
 						"parameters": {
 							"container_name": "raw",
 							"directory_name": "processed",
-							"file_name": "user_input_large_data.csv"
+							"file_name": "sales_processed.csv"
 						}
 					}
 				]
