@@ -61,7 +61,12 @@
 				"outputs": [
 					{
 						"referenceName": "ds_sales_processed_dev",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "raw",
+							"directory_name": "processed",
+							"file_name": "user_input_large_data.csv"
+						}
 					}
 				]
 			}
