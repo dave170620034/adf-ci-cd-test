@@ -125,6 +125,20 @@
 											"dataflow": {
 												"referenceName": "df_filter_active_records",
 												"type": "DataFlowReference",
+												"parameters": {
+													"container_name": {
+														"value": "'@{activity('lk_file_check').output}'",
+														"type": "Expression"
+													},
+													"directory_name": {
+														"value": "'@{activity('lk_get_file_list').output}'",
+														"type": "Expression"
+													},
+													"file_name": {
+														"value": "'@{activity('lk_get_file_list').output.value}'",
+														"type": "Expression"
+													}
+												},
 												"datasetParameters": {
 													"srcsalesraw": {
 														"container_name": "raw",
