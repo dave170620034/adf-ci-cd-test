@@ -28,7 +28,12 @@
 					},
 					"dataset": {
 						"referenceName": "ds_sales_raw_dev",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "raw",
+							"directory_name": "/",
+							"file_name": "user_input_large_data.csv"
+						}
 					},
 					"firstRowOnly": false
 				}
