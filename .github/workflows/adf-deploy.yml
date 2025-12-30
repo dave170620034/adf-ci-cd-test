@@ -14,22 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Deploy ARM Template
-      uses: azure/arm-deploy@v1
-      with:
-        resourceGroupName: ${{ secrets.RESOURCE_GROUP }}
-        template: ARMTemplateForFactory.json
-        parameters: >
-          ARMTemplateParametersForFactory.json
-          factoryName=${{ secrets.ADF_PROD_NAME }}
-        deploymentMode: Incremental
+      - name: Deploy ARM Template
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ secrets.RESOURCE_GROUP }}
+          template: adf-dev-project017/ARMTemplateForFactory.json
+          parameters: >
+            adf-dev-project017/ARMTemplateParametersForFactory.json
+            factoryName=${{ secrets.ADF_PROD_NAME }}
+          deploymentMode: Incremental
