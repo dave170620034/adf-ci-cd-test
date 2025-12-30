@@ -1,0 +1,76 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "pl_copyy_all",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_sales_raw_dev",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "raw",
+							"directory_name": "/",
+							"file_name": "user_input_large_data.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_sales_processed_dev",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "raw",
+							"directory_name": "processed",
+							"file_name": "sales_processed.csv"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
